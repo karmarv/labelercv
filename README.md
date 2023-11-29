@@ -1,2 +1,23 @@
-# labelercv
+# LabelerCV
 Labeling scripts and tools for Computer Vision datasets
+
+### 1. CVAT 
+- Git Repository
+    ```
+    git clone --recurse-submodules https://github.com/karmarv/labelercv.git
+    ```
+
+- Operate CVAT - [Instructions](./cvat_scripts/README.md)
+    ```
+    cd cvat_scripts
+    bash startup_cvat.bash
+    bash shutdown_cvat.bash
+    ```
+- Access CVAT: http://karmax.local:8080/tasks
+
+### 2. CVAT Functions
+- Nuclio functions. Eg: [YoloV7 & Onnx](https://github.com/WongKinYiu/yolov7)
+
+### 3. Data Converters
+- Convert backup task to YOLO labels.txt format
+- Convert backup task to COCO annotations.json format
