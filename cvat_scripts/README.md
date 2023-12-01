@@ -51,10 +51,7 @@
     NAMESPACE | NAME                   | PROJECT | STATE | REPLICAS | NODE PORT
     nuclio    | onnx-wongkinyiu-yolov7 | cvat    | ready | 1/1      | 53830
     ```
-    - Remove function
-    ```
-    nuctl delete function onnx-wongkinyiu-yolov7
-    ```
+    - Remove function: `nuctl delete function onnx-wongkinyiu-yolov7`
 - [Tested] Custom YoloV7 model to ONNX format for CVAT/Nuclio deployment
     ```
     git clone https://github.com/WongKinYiu/yolov7
@@ -77,10 +74,7 @@
         NAMESPACE | NAME             | PROJECT | STATE | REPLICAS | NODE PORT
         nuclio    | onnx-coco-yolov7 | cvat    | ready | 1/1      | 51069
         ```
-    - Remove function
-        ```
-        nuctl delete function onnx-onnx-yolov7
-        ```
+    - Remove function: `nuctl delete function onnx-coco-yolov7`
 
 #### (d.) Upgrade Guide
 - Upgrade CVAT deployed with docker compose 
