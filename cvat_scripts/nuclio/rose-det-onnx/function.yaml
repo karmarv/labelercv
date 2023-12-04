@@ -1,0 +1,52 @@
+metadata:
+  name: rose-det-onnx
+  namespace: cvat
+  annotations:
+    name: Rose Detector
+    type: detector
+    framework: onnx
+    spec: |
+      [
+        { "id": 0, "name": "rose", "type": "rectangle" }
+      ]
+
+spec:
+  description: Rose Object Detector via onnx and YoloV5
+  runtime: 'python:3.8'
+  handler: main:handler
+  eventTimeout: 30s
+  build:
+    image: cvat.onnx.rose.yolo
+    baseImage: ubuntu:22.04
+
+    directives:
+      preCopy:
+        - kind: ENV
+          value: DEBIAN_FRONTEND=noninteractive
+        - kind: USER
+          value: root
+        - kind: RUN
+          value: apt update && apt install --no-install-recommends -y wget curl vim git python3 python3-pip ffmpeg libsm6 libxext6
+        - kind: RUN
+          value: pip install onnxruntime opencv-python-headless pillow pyyaml
+        - kind: RUN
+          value: pip install ultralytics
+        - kind: WORKDIR
+          value: /opt/nuclio
+        - kind: RUN
+          value: ln -s /usr/bin/pip3 /usr/local/bin/pip && ln -s /usr/bin/python3 /usr/bin/python
+
+  triggers:
+    myHttpTrigger:
+      maxWorkers: 2
+      kind: 'http'
+      workerAvailabilityTimeoutMilliseconds: 10000
+      attributes:
+        maxRequestBodySize: 33554432 # 32MB
+
+  platform:
+    attributes:
+      restartPolicy:
+        name: always
+        maximumRetryCount: 3
+      mountMode: volume

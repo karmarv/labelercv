@@ -3,6 +3,8 @@
 #
 SRC_CONFIG="../cvat/docker-compose.yml"
 TGT_CONFIG="../cvat/docker-compose.local.yml"
-awk 'NR==FNR{n=n s $0; s=ORS; next} {print} FNR==373{print n}' tmp_cvat.conf $SRC_CONFIG > docker-compose.local.yml
+sed -e '372,377d' $SRC_CONFIG > ./docker-compose.tmp.yml
+awk 'NR==FNR{n=n s $0; s=ORS; next} {print} FNR==371{print n}' tmp_cvat.conf ./docker-compose.tmp.yml > docker-compose.local.yml
 cp docker-compose.local.yml $TGT_CONFIG
 echo "Updated the $TGT_CONFIG with local data folder configuration"
+rm ./docker-compose.tmp.yml

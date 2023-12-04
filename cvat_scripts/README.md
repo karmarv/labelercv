@@ -40,26 +40,14 @@
 - [TODO] Auto Annotate: https://opencv.github.io/cvat/docs/api_sdk/cli/#auto-annotate
 
 #### (c.) Serverless Functions Guide
-- Deploy YoloV7 Custom 
-    ```
-    cd ../cvat
-    serverless/deploy_cpu.sh serverless/onnx/WongKinYiu/yolov7/nuclio/
-    ```
-    - Verify `nuctl get functions`
-    ```
-    (base) rahul@karmax:labelercv/cvat_scripts$ nuctl get functions
-    NAMESPACE | NAME                   | PROJECT | STATE | REPLICAS | NODE PORT
-    nuclio    | onnx-wongkinyiu-yolov7 | cvat    | ready | 1/1      | 53830
-    ```
-    - Remove function: `nuctl delete function onnx-wongkinyiu-yolov7`
+```
+git clone https://github.com/WongKinYiu/yolov7
+conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+conda install onnx onnxruntime seaborn tensorboard pandas
+wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.pt
+python export.py --weights yolov7.pt  --grid --end2end --simplify --topk-all 100 --iou-thres 0.65 --conf-thres 0.35 --img-size 640 640 --max-wh 640
+```
 - [Tested] Custom YoloV7 model to ONNX format for CVAT/Nuclio deployment
-    ```
-    git clone https://github.com/WongKinYiu/yolov7
-    conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
-    conda install onnx onnxruntime seaborn tensorboard pandas
-    wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.pt
-    python export.py --weights yolov7.pt  --grid --end2end --simplify --topk-all 100 --iou-thres 0.65 --conf-thres 0.35 --img-size 640 640 --max-wh 640
-    ```
     - Copy the ONNX weights to nuclio folder
         ```
          cp yolov7.onnx ~/dev/labelercv/cvat_scripts/nuclio/yolov7-coco/
@@ -68,13 +56,22 @@
         ```
         nuctl deploy onnx-coco-yolov7 --project-name cvat --path ./nuclio/yolov7-coco --volume `pwd`/nuclio/yolov7-coco/yolov7.onnx:/opt/nuclio/best.onnx --platform local
         ```
-    - Verify `nuctl get functions`
-        ```
-        (yolo) rahul@karmax:~/dev/labelercv/cvat_scripts$ nuctl get functions
-        NAMESPACE | NAME             | PROJECT | STATE | REPLICAS | NODE PORT
-        nuclio    | onnx-coco-yolov7 | cvat    | ready | 1/1      | 51069
-        ```
-    - Remove function: `nuctl delete function onnx-coco-yolov7`
+- [`Rose Detection`] Custom detector model to ONNX format for CVAT/Nuclio deployment
+```
+nuctl deploy rose-det-onnx --project-name cvat --path ./nuclio/rose-det-onnx --volume `pwd`/nuclio/rose-det-onnx/rose_yolov5l_512.onnx:/opt/nuclio/best.onnx --platform local
+```
+- Test and debug in the nuclio docker 
+    ```
+    docker exec -it nuclio-nuclio-rose-det-onnx  bash
+    python test_onnx.py
+    ```
+- Verify `nuctl get functions`
+    ```
+    (yolo) rahul@karmax:~/dev/labelercv/cvat_scripts$ nuctl get functions
+    NAMESPACE | NAME          | PROJECT | STATE | REPLICAS | NODE PORT
+    nuclio    | rose-det-onnx | cvat    | ready | 1/1      | 55135
+    ```
+- Remove function: `nuctl delete function rose-det-onnx`
 
 #### (d.) Upgrade Guide
 - Upgrade CVAT deployed with docker compose 
