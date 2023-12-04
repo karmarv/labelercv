@@ -21,3 +21,9 @@ Labeling scripts and tools for Computer Vision datasets
 ### 3. Data Converters
 - Convert backup task to YOLO labels.txt format
 - Convert backup task to COCO annotations.json format
+
+### GCP Installation
+- GCP Reference: https://docs.h2o.ai/driverless-ai/latest-stable/docs/userguide/install/google-docker-container.html
+- Docker Reference: https://docs.docker.com/engine/install/ubuntu/
+
+

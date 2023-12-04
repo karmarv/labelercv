@@ -5,6 +5,7 @@
     - mkdir -p -- "../cvat_data"
     - Ensure CVAT `v2.9.1` version and paths in `*.bash` scripts
 - Configure: `bash configure_cvat.bash`
+    - configures and copies the docker-compose.local.yml file to ../cvat/ 
 - Startup `bash startup_cvat.bash`
 - Create User `docker exec -it cvat_server bash -ic 'python3 ~/manage.py createsuperuser'` 
     - User: `admin` & Pass: `nimda`
@@ -57,9 +58,10 @@ python export.py --weights yolov7.pt  --grid --end2end --simplify --topk-all 100
         nuctl deploy onnx-coco-yolov7 --project-name cvat --path ./nuclio/yolov7-coco --volume `pwd`/nuclio/yolov7-coco/yolov7.onnx:/opt/nuclio/best.onnx --platform local
         ```
 - [`Rose Detection`] Custom detector model to ONNX format for CVAT/Nuclio deployment
-```
-nuctl deploy rose-det-onnx --project-name cvat --path ./nuclio/rose-det-onnx --volume `pwd`/nuclio/rose-det-onnx/rose_yolov5l_512.onnx:/opt/nuclio/best.onnx --platform local
-```
+    ```
+    nuctl deploy rose-det-onnx --project-name cvat --path ./nuclio/rose-det-onnx --volume `pwd`/nuclio/rose-det-onnx/rose_yolov5l_512.onnx:/opt/nuclio/best.onnx --platform local
+    ```
+    ![Sample Nuclio](./sample/CVAT-AutoAnn-NuclioFunction-Screenshot.png)
 - Test and debug in the nuclio docker 
     ```
     docker exec -it nuclio-nuclio-rose-det-onnx  bash
@@ -71,7 +73,10 @@ nuctl deploy rose-det-onnx --project-name cvat --path ./nuclio/rose-det-onnx --v
     NAMESPACE | NAME          | PROJECT | STATE | REPLICAS | NODE PORT
     nuclio    | rose-det-onnx | cvat    | ready | 1/1      | 55135
     ```
-- Remove function: `nuctl delete function rose-det-onnx`
+    - Remove function: `nuctl delete function rose-det-onnx`
+
+- Auto Annotation
+![Sample Auto](./sample/CVAT-AutoAnn-Screenshot.png)
 
 #### (d.) Upgrade Guide
 - Upgrade CVAT deployed with docker compose 
@@ -80,6 +85,6 @@ nuctl deploy rose-det-onnx --project-name cvat --path ./nuclio/rose-det-onnx --v
 #### (e.) Destroy the environment and cleanup
 - Delete docker cvat environment including the volumes
     ```
-    docker compose -f docker-compose.yml -f components/serverless/docker-compose.serverless.yml  down --rmi all --volumes --remove-orphans
+    docker compose -f docker-compose.local.yml -f components/serverless/docker-compose.serverless.yml  down --rmi all --volumes --remove-orphans
     rm -rf ~/dev/cvat_data/*
     ```
