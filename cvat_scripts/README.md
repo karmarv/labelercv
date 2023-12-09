@@ -67,6 +67,10 @@ python export.py --weights yolov7.pt  --grid --end2end --simplify --topk-all 100
     docker exec -it nuclio-nuclio-rose-det-onnx  bash
     python test_onnx.py
     ```
+    - CURL test on http://karmax.local:8070/projects/cvat/functions/rose-det-onnx/code
+    ```
+    (echo -n '{"image": "'; base64 ./nuclio/rose-det-onnx/DJI_0002.JPG; echo '"}') | curl -H "Content-Type: application/json" -d @-  http://0.0.0.0:52479 
+    ```
 - Verify `nuctl get functions`
     ```
     (yolo) rahul@karmax:~/dev/labelercv/cvat_scripts$ nuctl get functions
