@@ -6,6 +6,10 @@ Labeling scripts and tools for Computer Vision datasets
     ```
     git clone --recurse-submodules https://github.com/karmarv/labelercv.git
     ```
+    - Ensure CVAT submodule is checked out 
+    ```
+    git clone --depth 1 --branch v2.9.2 https://github.com/opencv/cvat
+    ```
 
 - Operate CVAT - [Instructions](./cvat_scripts/README.md)
     ```
