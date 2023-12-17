@@ -1,9 +1,13 @@
-# CVAT Setup [v2.9.1](https://github.com/opencv/cvat/releases/tag/v2.9.1)
+# CVAT Setup [v2.9.2](https://github.com/opencv/cvat/releases/tag/v2.9.2)
 
 #### (a.) Installation Guide
 - Setup
-    - mkdir -p -- "../cvat_data"
-    - Ensure CVAT `v2.9.1` version and paths in `*.bash` scripts
+    - mkdir -p -- "~/dev/cvat_data"
+    - Ensure CVAT `v2.9.2` version and paths in `*.bash` scripts
+    - Make sure all the previous volumes are cleaned up due to mount error in WSL2
+        ```
+        Error response from daemon: failed to mount local volume: mount /run/desktop/mnt/host/wsl/docker-desktop-bind-mounts/Ubuntu/9c4a87facd8ce64dd6871ce19059928bfc5f3f44b66327099d363cd3999afdac:/var/lib/docker/volumes/cvat_cvat_db/_data, flags: 0x1000: no such file or directory
+        ```
 - Configure: `bash configure_cvat.bash`
     - configures and copies the docker-compose.local.yml file to ../cvat/ 
 - Startup `bash startup_cvat.bash`
@@ -41,14 +45,17 @@
 - [TODO] Auto Annotate: https://opencv.github.io/cvat/docs/api_sdk/cli/#auto-annotate
 
 #### (c.) Serverless Functions Guide
-```
-git clone https://github.com/WongKinYiu/yolov7
-conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
-conda install onnx onnxruntime seaborn tensorboard pandas
-wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.pt
-python export.py --weights yolov7.pt  --grid --end2end --simplify --topk-all 100 --iou-thres 0.65 --conf-thres 0.35 --img-size 640 640 --max-wh 640
-```
-- [Tested] Custom YoloV7 model to ONNX format for CVAT/Nuclio deployment
+
+- Create a Nuclio Project - http://karmax.local:8070/projects
+    ![Project Nuclio](./sample/CVAT-Create_Nuclio_Project.png)
+- Custom YoloV7 model to ONNX format for CVAT/Nuclio deployment
+    ```
+    git clone https://github.com/WongKinYiu/yolov7
+    conda install pytorch torchvision torchaudio pytorch-cuda=11.8 -c pytorch -c nvidia
+    conda install onnx onnxruntime seaborn tensorboard pandas
+    wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7.pt
+    python export.py --weights yolov7.pt  --grid --end2end --simplify --topk-all 100 --iou-thres 0.65 --conf-thres 0.35 --img-size 640 640 --max-wh 640
+    ```
     - Copy the ONNX weights to nuclio folder
         ```
          cp yolov7.onnx ~/dev/labelercv/cvat_scripts/nuclio/yolov7-coco/
@@ -61,7 +68,8 @@ python export.py --weights yolov7.pt  --grid --end2end --simplify --topk-all 100
     ```
     nuctl deploy rose-det-onnx --project-name cvat --path ./nuclio/rose-det-onnx --volume `pwd`/nuclio/rose-det-onnx/rose_yolov5l_512.onnx:/opt/nuclio/best.onnx --platform local
     ```
-    ![Sample Nuclio](./sample/CVAT-AutoAnn-NuclioFunction-Screenshot.png)
+    ![Deploy Nuclio](./sample/CVAT-Deploy-NuclioFunction-Screenshot.png)
+    
 - Test and debug in the nuclio docker 
     ```
     docker exec -it nuclio-nuclio-rose-det-onnx  bash
@@ -77,8 +85,9 @@ python export.py --weights yolov7.pt  --grid --end2end --simplify --topk-all 100
     NAMESPACE | NAME          | PROJECT | STATE | REPLICAS | NODE PORT
     nuclio    | rose-det-onnx | cvat    | ready | 1/1      | 55135
     ```
+    ![Sample Nuclio](./sample/CVAT-AutoAnn-NuclioFunction-Screenshot.png)
     - Remove function: `nuctl delete function rose-det-onnx`
-
+    
 - Auto Annotation
 ![Sample Auto](./sample/CVAT-AutoAnn-Screenshot.png)
 
@@ -89,6 +98,5 @@ python export.py --weights yolov7.pt  --grid --end2end --simplify --topk-all 100
 #### (e.) Destroy the environment and cleanup
 - Delete docker cvat environment including the volumes
     ```
-    docker compose -f docker-compose.local.yml -f components/serverless/docker-compose.serverless.yml  down --rmi all --volumes --remove-orphans
-    rm -rf ~/dev/cvat_data/*
+    bash shutdown_cvat.bash delete
     ```

@@ -1,4 +1,4 @@
-export CVAT_VERSION="v2.9.1"
+export CVAT_VERSION="v2.9.2"
 export CVAT_HOST="$(hostname).local"
 cd ../cvat
 # Startup docker containers
