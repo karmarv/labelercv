@@ -8,7 +8,7 @@ Labeling scripts and tools for Computer Vision datasets
     ```
     - Ensure CVAT submodule is checked out 
     ```
-    git clone --depth 1 --branch v2.9.2 https://github.com/opencv/cvat
+    git clone --depth 1 --branch v2.11.0 https://github.com/opencv/cvat
     ```
 
 - Operate CVAT - [Instructions](./cvat_scripts/README.md)
