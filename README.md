@@ -17,7 +17,7 @@ Labeling scripts and tools for Computer Vision datasets
     bash startup_cvat.bash
     bash shutdown_cvat.bash
     ```
-- Access CVAT: http://karmax.local:8080/tasks
+- Access CVAT: http://karmax:8080/tasks
 
 ### 2. CVAT Functions
 - Nuclio functions. Eg: [YoloV7 & Onnx](https://github.com/WongKinYiu/yolov7)

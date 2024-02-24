@@ -1,9 +1,9 @@
-# CVAT Setup [v2.9.2](https://github.com/opencv/cvat/releases/tag/v2.9.2)
+# CVAT Setup [v2.11.0](https://github.com/opencv/cvat/releases/tag/v2.11.0)
 
 #### (a.) Installation Guide
 - Setup
     - mkdir -p -- "~/dev/cvat_data"
-    - Ensure CVAT `v2.9.2` version and paths in `*.bash` scripts
+    - Ensure CVAT `v2.11.0` version and paths in `*.bash` scripts
     - Make sure all the previous volumes are cleaned up due to mount error in WSL2
         ```
         Error response from daemon: failed to mount local volume: mount /run/desktop/mnt/host/wsl/docker-desktop-bind-mounts/Ubuntu/9c4a87facd8ce64dd6871ce19059928bfc5f3f44b66327099d363cd3999afdac:/var/lib/docker/volumes/cvat_cvat_db/_data, flags: 0x1000: no such file or directory
@@ -13,7 +13,7 @@
 - Startup `bash startup_cvat.bash`
 - Create User `docker exec -it cvat_server bash -ic 'python3 ~/manage.py createsuperuser'` 
     - User: `admin` & Pass: `nimda`
-- CVAT UI http://karmax.local:8080/tasks
+- CVAT UI http://karmax:8080/tasks
 - Shutdown `bash shutdown_cvat.bash`
 - Setup Nuclio [Serverless Functions](https://opencv.github.io/cvat/docs/manual/advanced/serverless-tutorial/)
     - Download & setup v1.11.24
@@ -22,12 +22,12 @@
     sudo chmod +x nuctl-1.11.24-linux-amd64
     sudo ln -sf $(pwd)/nuctl-1.11.24-linux-amd64 /usr/local/bin/nuctl
     ```
-    - Nuclio Dashboard: http://karmax.local:8070/projects
+    - Nuclio Dashboard: http://karmax:8070/projects
 
 #### (b.) CVAT CLI Tool
 - Install `pip install cvat-cli==2.9.1`
 - Documentation: https://opencv.github.io/cvat/docs/api_sdk/cli/
-- Env: `export CVAT_HOST_AUTH="--server-host http://karmax.local:8080 --auth admin:nimda"`
+- Env: `export CVAT_HOST_AUTH="--server-host http://karmax:8080 --auth admin:nimda"`
 - Operations on Task
     - Create new task
         ```
@@ -46,7 +46,7 @@
 
 #### (c.) Serverless Functions Guide
 
-- Create a Nuclio Project - http://karmax.local:8070/projects
+- Create a Nuclio Project - http://karmax:8070/projects
     ![Project Nuclio](./sample/CVAT-Create_Nuclio_Project.png)
 - Custom YoloV7 model to ONNX format for CVAT/Nuclio deployment
     ```
@@ -75,7 +75,7 @@
     docker exec -it nuclio-nuclio-rose-det-onnx  bash
     python test_onnx.py
     ```
-    - CURL test on http://karmax.local:8070/projects/cvat/functions/rose-det-onnx/code
+    - CURL test on http://karmax:8070/projects/cvat/functions/rose-det-onnx/code
     ```
     (echo -n '{"image": "'; base64 ./nuclio/rose-det-onnx/DJI_0002.JPG; echo '"}') | curl -H "Content-Type: application/json" -d @-  http://0.0.0.0:52479 
     ```
